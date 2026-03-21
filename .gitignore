@@ -1,0 +1,25 @@
+#python кеш
+__pycache__/
+*.py[cod]
+
+#python окружение
+.venv/
+venv/
+
+#node артефакты
+node_modules/
+.next/
+
+#локальные env
+.env
+.env.local
+backend/.env
+frontend/.env.local
+
+#секреты telethon
+backend/sessions/*.session
+backend/sessions/*.session-journal
+
+#os мусор
+.DS_Store
+Thumbs.db
