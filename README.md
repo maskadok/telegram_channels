@@ -13,6 +13,7 @@ Current Oracle Cloud deployment:
 ```text
 Frontend: http://144.24.168.76:3000
 Backend health: http://144.24.168.76:8000/health
+```
 
 ## What The App Does
 
