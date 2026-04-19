@@ -13,9 +13,6 @@ Current Oracle Cloud deployment:
 ```text
 Frontend: http://144.24.168.76:3000
 Backend health: http://144.24.168.76:8000/health
-```
-
-This IP is an Oracle Cloud ephemeral public IP. If the VM is recreated or the public IP changes, update the URLs in `.env`, Oracle Cloud security rules, and this README.
 
 ## What The App Does
 
@@ -55,36 +52,6 @@ The backend owns Telegram integration, database access, analytics, API routes, m
 - Infra: `Docker`, `Docker Compose`
 - Cloud deployment used for final demo: `Oracle Cloud Free Tier VM`
 
-## Repository Structure
-
-```text
-.
-├── backend/
-│   ├── alembic/                 database migrations
-│   ├── app/
-│   │   ├── api/                 FastAPI routes
-│   │   ├── core/                settings and logging
-│   │   ├── db/                  SQLAlchemy session and metadata
-│   │   ├── models/              database models
-│   │   ├── scheduler/           APScheduler setup
-│   │   ├── schemas/             API response schemas
-│   │   ├── services/            Telegram sync and business logic
-│   │   └── utils/               metrics and time helpers
-│   ├── scripts/                 Telethon session bootstrap script
-│   ├── Dockerfile
-│   └── requirements.txt
-├── frontend/
-│   ├── app/                     Next.js App Router pages
-│   ├── components/              UI components
-│   ├── lib/                     API client, types, format helpers
-│   ├── public/
-│   ├── Dockerfile
-│   └── package.json
-├── docs/                        final report document
-├── docker-compose.yml
-└── README.md
-```
-
 ## API Endpoints
 
 ```text
@@ -94,8 +61,6 @@ POST /api/sync
 GET  /api/posts/top?period=7d|30d|90d|all&limit=20
 GET  /api/posts/recent?limit=20
 ```
-
-For the current demo, the frontend reads from `/api/posts/top`, while the backend returns the newest stored posts with analytics fields. Use `period=all` when you want to see all synced posts regardless of age.
 
 ## Database Tables
 
@@ -128,14 +93,6 @@ For the current demo, the frontend reads from `/api/posts/top`, while the backen
 - `raw_json`
 - `created_at`
 - `updated_at`
-
-There is a uniqueness constraint on:
-
-```text
-tracked_channel_id + telegram_message_id
-```
-
-This allows safe upserts when the same post is synced again with newer metrics.
 
 ## Analytics Logic
 
@@ -188,35 +145,11 @@ Get `TELEGRAM_API_ID` and `TELEGRAM_API_HASH` from:
 https://my.telegram.org
 ```
 
-Do not hardcode these values in source code.
-
-Do not put Telegram secrets, bot tokens, or session files into frontend code.
-
 The frontend should only contain public configuration:
 
 ```text
 NEXT_PUBLIC_API_BASE_URL
 ```
-
-## Secret Files
-
-These files are local/server-only and must not be committed:
-
-```text
-.env
-backend/.env
-frontend/.env.local
-backend/sessions/*.session
-*.session
-```
-
-Before pushing, check:
-
-```bash
-git status --ignored
-```
-
-Secrets and session files should appear as ignored files, not staged files.
 
 ## Local Setup
 
@@ -427,91 +360,3 @@ Frontend:
 http://localhost:3000
 http://144.24.168.76:3000
 ```
-
-## Common Problems
-
-`telethon session is not authorized`
-
-The backend cannot use a valid Telegram session. Create the session with `python scripts/create_telethon_session.py` and make sure the `.session` file is mounted into `/app/sessions` in Docker.
-
-`ApiIdInvalidError`
-
-`TELEGRAM_API_ID` and `TELEGRAM_API_HASH` do not match. Recheck them at `my.telegram.org`.
-
-Browser cannot open public IP
-
-Check Oracle Cloud ingress rules for ports `3000` and `8000`.
-
-Frontend is empty
-
-Run manual sync:
-
-```bash
-curl -X POST http://localhost:8000/api/sync
-```
-
-Then use:
-
-```text
-period=all
-```
-
-Docker Compose starts but backend fails
-
-Check logs:
-
-```bash
-sudo docker compose logs --tail=120 backend
-```
-
-Telegram flood wait
-
-Reduce sync frequency, reduce `FETCH_LIMIT`, and track fewer channels.
-
-## Telegram Mini App Notes
-
-The frontend is designed to be usable inside Telegram WebApp and in a normal browser. For a proper Telegram Mini App production setup, use:
-
-```text
-HTTPS frontend URL
-BotFather Mini App configuration
-No frontend secrets
-```
-
-For the current university demo, the public browser URL is enough to show a working cloud deployment. Telegram Mini App HTTPS polish can be done later.
-
-## Security Notes
-
-The most sensitive file is the Telethon `.session` file. If it leaks, someone may be able to access the Telegram account session without a one-time login code.
-
-If secrets leak:
-
-1. Delete leaked `.session` files locally and from the server.
-2. Terminate suspicious Telegram sessions in Telegram settings.
-3. Generate a new Telethon session.
-4. Consider creating new Telegram API credentials.
-5. Check Git history for accidental secret commits.
-
-## MVP Limitations
-
-- Only configured channels are tracked.
-- Private channels require the Telegram user account to have access.
-- Metrics depend on what Telegram exposes to the user account.
-- The analytics rule is simple and does not use ML.
-- The current public deployment uses HTTP ports `3000` and `8000`, not a hardened HTTPS reverse proxy.
-- This is an MVP, not a production-hardened system.
-
-## Final Project Defence Checklist
-
-Prepare these items:
-
-- GitHub repository link.
-- Public frontend URL.
-- Backend health URL.
-- Screenshot of Oracle Cloud VM running.
-- Screenshot of `docker compose ps`.
-- Screenshot of frontend with Telegram posts.
-- Screenshot of `/health`.
-- Screenshot or terminal output of `/api/sync`.
-- Short report in `docs/Final_Project_Report.docx`.
-
