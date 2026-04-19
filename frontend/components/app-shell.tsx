@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 
-import { MiniAppInit } from "@/components/mini-app-init";
+import { MiniAppInit } from "./mini-app-init";
 
 
 export function AppShell({ children }: { children: ReactNode }) {

@@ -54,16 +54,15 @@ def get_top_posts(
     period: str,
     limit: int,
 ) -> list[PostOut]:
-    #выборка топ постов
+    #свежие посты
     stmt = _base_posts_query(channel_username=channel_username)
     period_from: datetime | None = period_start(period)
     if period_from is not None:
         stmt = stmt.where(ChannelPost.message_date >= period_from)
 
     stmt = stmt.order_by(
-        desc(ChannelPost.is_alert_candidate),
-        desc(ChannelPost.popularity_score),
         desc(ChannelPost.message_date),
+        desc(ChannelPost.id),
     ).limit(limit)
 
     return [_to_post_out(post, channel) for post, channel in db.execute(stmt).all()]

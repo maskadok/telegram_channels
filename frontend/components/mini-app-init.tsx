@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import { getTelegramWebApp } from "@/lib/telegram-webapp";
+import { getTelegramWebApp } from "../lib/telegram-webapp";
 
 
 export function MiniAppInit() {

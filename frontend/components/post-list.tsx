@@ -1,7 +1,7 @@
-import { PostItem } from "@/lib/types";
+import { PostItem } from "../lib/types";
 
-import { PostCard } from "@/components/post-card";
-import { StateBlock } from "@/components/state-block";
+import { PostCard } from "./post-card";
+import { StateBlock } from "./state-block";
 
 interface PostListProps {
   posts: PostItem[];

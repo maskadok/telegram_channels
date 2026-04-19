@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from "react";
 
-import { FilterBar } from "@/components/filter-bar";
-import { PostList } from "@/components/post-list";
-import { StateBlock } from "@/components/state-block";
-import { fetchChannels, fetchTopPosts } from "@/lib/api";
-import { ChannelItem, PeriodFilter, PostItem } from "@/lib/types";
+import { fetchChannels, fetchTopPosts } from "../lib/api";
+import { ChannelItem, PeriodFilter, PostItem } from "../lib/types";
+import { FilterBar } from "./filter-bar";
+import { PostList } from "./post-list";
+import { StateBlock } from "./state-block";
 
 
 export function DashboardPage() {
@@ -93,10 +93,10 @@ export function DashboardPage() {
     <div className="dashboard-stack">
       <section className="hero-card">
         <p className="eyebrow">telegram analytics</p>
-        <h1>Early signal posts</h1>
+        <h1>Recent channel posts</h1>
         <p className="hero-text">
-          A lightweight dashboard that highlights posts with strong early views against the
-          channel baseline. Works inside Telegram Mini App and in a normal browser.
+          A lightweight dashboard that collects Telegram channel posts and shows them from newest
+          to oldest. Works inside Telegram Mini App and in a normal browser.
         </p>
       </section>
 
@@ -124,7 +124,7 @@ export function DashboardPage() {
       <div className="section-head">
         <div>
           <p className="section-label">results</p>
-          <h2>Signal feed</h2>
+          <h2>Recent posts</h2>
         </div>
         <p className="section-meta">
           {selectedChannel ? `@${selectedChannel}` : "All channels"} | {selectedPeriod}

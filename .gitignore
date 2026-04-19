@@ -12,11 +12,16 @@ node_modules/
 
 #локальные env
 .env
-.env.local
+.env.*
 backend/.env
+backend/.env.*
+frontend/.env
+frontend/.env.*
 frontend/.env.local
 
 #секреты telethon
+backend/sessions/*
+!backend/sessions/.gitkeep
 backend/sessions/*.session
 backend/sessions/*.session-journal
 

@@ -1,4 +1,4 @@
-import { ChannelItem, PeriodFilter, PostItem } from "@/lib/types";
+import { ChannelItem, PeriodFilter, PostItem } from "./types";
 
 //клиент для api
 async function apiRequest<T>(path: string): Promise<T> {
@@ -44,7 +44,7 @@ export async function fetchTopPosts(params: {
   channelUsername?: string;
   limit?: number;
 }): Promise<PostItem[]> {
-  //загрузка топ постов
+  //загрузка свежих постов
   const query = new URLSearchParams();
   query.set("period", params.period);
   query.set("limit", String(params.limit ?? 20));

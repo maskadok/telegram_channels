@@ -1,4 +1,4 @@
-import { ChannelItem, PeriodFilter } from "@/lib/types";
+import { ChannelItem, PeriodFilter } from "../lib/types";
 
 const PERIOD_OPTIONS: Array<{ value: PeriodFilter; label: string }> = [
   { value: "7d", label: "7d" },

@@ -6,7 +6,6 @@ from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from typing import Any
 
-from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select
 from sqlalchemy.orm import Session, sessionmaker
 from telethon.tl.custom.message import Message
@@ -101,7 +100,7 @@ class TelegramSyncService:
                 return summary
 
             async with self.client_service.client() as client:
-                for username in normalized_channels:
+                for index, username in enumerate(normalized_channels):
                     with self.session_factory() as db:
                         try:
                             created, updated = await self._sync_single_channel(
@@ -124,12 +123,15 @@ class TelegramSyncService:
                                 ),
                             )
 
+                    if index < len(normalized_channels) - 1 and self.settings.telegram_request_pause_seconds > 0:
+                        await asyncio.sleep(self.settings.telegram_request_pause_seconds)
+
             summary.finished_at = utcnow()
             return summary
 
     def _prepare_channel_usernames(self, channel_usernames: list[str] | None) -> list[str]:
         #список каналов для синка
-        source = channel_usernames or self.settings.telegram_channels
+        source = channel_usernames or self.settings.telegram_channel_list
 
         normalized: list[str] = []
         seen: set[str] = set()
@@ -321,7 +323,7 @@ class TelegramSyncService:
                     replies_count=replies_count,
                     reactions_total=reactions_total,
                     collected_at=collected_at,
-                    raw_json=jsonable_encoder(message.to_dict()),
+                    raw_json=self._safe_raw_message(message),
                 ),
             )
 
@@ -347,3 +349,14 @@ class TelegramSyncService:
             return 0
 
         return sum(int(getattr(result, "count", 0) or 0) for result in reactions.results)
+
+    @staticmethod
+    def _safe_raw_message(message: Message) -> dict[str, Any]:
+        #без бинарных полей
+        return {
+            "id": int(message.id),
+            "date": message.date.isoformat() if message.date else None,
+            "views": int(getattr(message, "views", 0) or 0),
+            "forwards": int(getattr(message, "forwards", 0) or 0),
+            "has_media": bool(getattr(message, "media", None)),
+        }

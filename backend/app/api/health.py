@@ -12,7 +12,9 @@ router = APIRouter()
 
 @router.get("/health", response_model=HealthResponse)
 def health_check(request: Request, db: Session = Depends(get_db)) -> HealthResponse:
-    tracked_channels = db.scalar(select(func.count(TrackedChannel.id))) or 0
+    tracked_channels = db.scalar(
+        select(func.count(TrackedChannel.id)).where(TrackedChannel.is_active.is_(True)),
+    ) or 0
     stored_posts = db.scalar(select(func.count(ChannelPost.id))) or 0
     scheduler = getattr(request.app.state, "scheduler", None)
     settings = request.app.state.settings

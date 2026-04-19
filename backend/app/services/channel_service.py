@@ -37,6 +37,13 @@ def ensure_configured_channels(db: Session, channel_usernames: list[str]) -> int
                 ),
             )
             created += 1
+        else:
+            channel.is_active = True
+
+    db.query(TrackedChannel).filter(TrackedChannel.username.not_in(seen)).update(
+        {TrackedChannel.is_active: False},
+        synchronize_session=False,
+    )
 
     return created
 
@@ -60,6 +67,7 @@ def list_channels(db: Session) -> list[ChannelListItem]:
             stats_subquery.c.latest_post_date,
         )
         .outerjoin(stats_subquery, stats_subquery.c.channel_id == TrackedChannel.id)
+        .where(TrackedChannel.is_active.is_(True))
         .order_by(TrackedChannel.username.asc())
     )
 

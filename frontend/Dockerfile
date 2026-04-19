@@ -2,7 +2,6 @@ FROM node:22-alpine
 
 ARG NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
 ENV NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}
-ENV NODE_ENV=production
 
 WORKDIR /app
 
@@ -19,6 +18,8 @@ COPY lib ./lib
 COPY public ./public
 
 RUN npm run build
+
+ENV NODE_ENV=production
 
 EXPOSE 3000
 

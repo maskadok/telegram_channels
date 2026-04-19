@@ -33,22 +33,24 @@ services:
       TELEGRAM_API_HASH: ${TELEGRAM_API_HASH:-}
       TELEGRAM_PHONE: ${TELEGRAM_PHONE:-}
       TELETHON_SESSION_NAME: ${TELETHON_SESSION_NAME:-telegram_user}
-      SYNC_INTERVAL_MINUTES: ${SYNC_INTERVAL_MINUTES:-30}
-      TELEGRAM_CHANNELS: ${TELEGRAM_CHANNELS:-durov,telegram}
+      TELETHON_SESSION_DIR: /app/sessions
+      SYNC_INTERVAL_MINUTES: ${SYNC_INTERVAL_MINUTES:-120}
+      TELEGRAM_CHANNELS: ${TELEGRAM_CHANNELS:-tproger,habr_com}
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
       LOG_LEVEL: ${LOG_LEVEL:-INFO}
-      FETCH_LIMIT: ${FETCH_LIMIT:-100}
+      FETCH_LIMIT: ${FETCH_LIMIT:-30}
+      TELEGRAM_REQUEST_PAUSE_SECONDS: ${TELEGRAM_REQUEST_PAUSE_SECONDS:-3}
     command:
       [
         "sh",
         "-c",
-        "until python -c \"import os, psycopg; psycopg.connect(os.environ['DATABASE_URL'].replace('+psycopg', '')).close()\"; do echo 'waiting for postgres'; sleep 2; done; alembic upgrade head && uvicorn app.main:app --host \"$APP_HOST\" --port \"$APP_PORT\""
+        "until python -c \"import os, psycopg; psycopg.connect(os.environ['DATABASE_URL'].replace('+psycopg', '')).close()\"; do echo 'waiting for postgres'; sleep 2; done; alembic upgrade head && uvicorn app.main:app --host \"$$APP_HOST\" --port \"$$APP_PORT\""
       ]
     ports:
       - "8000:8000"
     volumes:
       - ./backend:/app
-      - ./backend/sessions:/app/sessions
+      - ${TELETHON_SESSION_HOST_DIR:-C:/telegram_analytics_sessions}:/app/sessions
     healthcheck:
       test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')\""]
       interval: 15s

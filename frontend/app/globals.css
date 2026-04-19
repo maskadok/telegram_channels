@@ -188,7 +188,7 @@ select {
 
 .section-head {
   display: flex;
-  align-items: end;
+  align-items: flex-end;
   justify-content: space-between;
   gap: 12px;
 }
@@ -213,7 +213,7 @@ select {
 
 .post-head {
   display: flex;
-  align-items: start;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
 }
@@ -333,7 +333,7 @@ select {
 
   .section-head {
     flex-direction: column;
-    align-items: start;
+    align-items: flex-start;
   }
 
   .metrics-grid {

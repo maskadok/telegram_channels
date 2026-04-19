@@ -12,6 +12,6 @@ router = APIRouter()
 @router.get("/channels", response_model=list[ChannelListItem])
 def get_channels(db: Session = Depends(get_db)) -> list[ChannelListItem]:
     settings = get_settings()
-    ensure_configured_channels(db, settings.telegram_channels)
+    ensure_configured_channels(db, settings.telegram_channel_list)
     db.commit()
     return list_channels(db)

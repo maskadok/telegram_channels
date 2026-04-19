@@ -1,5 +1,5 @@
-import { formatDate, formatNumber, truncateText } from "@/lib/format";
-import { PostItem } from "@/lib/types";
+import { formatDate, formatNumber, truncateText } from "../lib/format";
+import { PostItem } from "../lib/types";
 
 interface PostCardProps {
   post: PostItem;
@@ -14,7 +14,7 @@ export function PostCard({ post }: PostCardProps) {
         <div>
           <p className="post-channel">{post.channel_title || `@${post.channel_username}`}</p>
           <p className="post-date">{formatDate(post.message_date)}</p>
-          {post.is_alert_candidate ? <p className="post-alert">alert candidate in first 8h</p> : null}
+          {post.is_alert_candidate ? <p className="post-alert">strong early signal</p> : null}
         </div>
         <a className="post-link" href={post.telegram_url} target="_blank" rel="noreferrer">
           Open
@@ -24,7 +24,7 @@ export function PostCard({ post }: PostCardProps) {
       <p className="post-text">{truncateText(post.text)}</p>
       {post.alert_threshold_views > 0 ? (
         <p className="post-threshold">
-          Threshold 50%: {formatNumber(post.alert_threshold_views)} from median{" "}
+          Signal threshold: {formatNumber(post.alert_threshold_views)} from median{" "}
           {formatNumber(post.channel_median_views)}
         </p>
       ) : null}
@@ -47,7 +47,7 @@ export function PostCard({ post }: PostCardProps) {
           <dd>{formatNumber(post.replies_count)}</dd>
         </div>
         <div className="score-block">
-          <dt>Alert score</dt>
+          <dt>Signal</dt>
           <dd>{formatNumber(post.popularity_score)}</dd>
         </div>
       </dl>
